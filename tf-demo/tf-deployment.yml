@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: tensorflow-deployment
+  namespace: gw-demo
+  labels:
+    app: tf-demo 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tf-demo
+  template:
+    metadata:
+      labels:
+        app: tf-demo
+    spec:
+      imagePullSecrets:
+        - name: nvcr.dgxkey
+      containers:
+        - name: tensorflow-container
+          image: nvcr.io/nvidia/tensorflow:19.07-py3
+          command: ["/bin/sh", "-c"]
+          args: ["sleep infinity"]
+          resources:
+            limits:
+              nvidia.com/gpu: 8

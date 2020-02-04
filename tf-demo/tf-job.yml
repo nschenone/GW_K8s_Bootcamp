@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tensorflow-example
+  namespace: gw-demo
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      imagePullSecrets:
+        - name: nvcr.dgxkey
+      restartPolicy: Never
+      containers:
+        - name: tensorflow-container
+          image: nvcr.io/nvidia/tensorflow:19.07-py3
+          command: ["/bin/sh", "-c"]
+          args:
+            - mpiexec --allow-run-as-root --bind-to socket -np 16 python /workspace/nvidia-examples/cnn/resnet.py --layers=50 --precision=fp16 --batch_size=512
+          resources:
+            limits:
+              nvidia.com/gpu: 16
